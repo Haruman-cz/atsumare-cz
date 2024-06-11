@@ -1,0 +1,35 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@aws-amplify/backend": "^1.0.3",
+    "@aws-sdk/client-cognito-identity-provider": "^3.577.0",
+    "@aws-sdk/client-dynamodb": "^3.584.0",
+    "@aws-sdk/client-pinpoint": "^3.588.0",
+    "@aws-sdk/lib-dynamodb": "^3.584.0",
+    "aws-amplify": "^6.3.6",
+    "aws-sdk": "^2.1606.0",
+    "dotenv": "^16.4.5",
+    "firebase-admin": "^12.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.1.0",
+    "jwt-decode": "^4.0.0",
+    "next": "latest",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "uuid": "^9.0.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/node": "20.12.7",
+    "@types/react": "18.2.75",
+    "typescript": "5.4.5"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "version": "1",
+  "cognitoConfig": {
+    "identityPoolName": "atsumarecz_identitypool_72899237",
+    "allowUnauthenticatedIdentities": true,
+    "authSelections": "identityPoolOnly",
+    "resourceName": "atsumarecz",
+    "sharedId": "72899237",
+    "serviceName": "Cognito",
+    "useDefault": "manual"
+  }
+}

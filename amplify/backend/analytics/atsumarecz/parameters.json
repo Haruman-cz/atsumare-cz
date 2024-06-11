@@ -1,0 +1,21 @@
+{
+    "appName": "atsumarecz",
+    "roleName": "pinpointLambdaRole09b04879",
+    "cloudformationPolicyName": "cloudformationPolicy09b04879",
+    "cloudWatchPolicyName": "cloudWatchPolicy09b04879",
+    "pinpointPolicyName": "pinpointPolicy09b04879",
+    "authPolicyName": "pinpoint_amplify_09b04879",
+    "unauthPolicyName": "pinpoint_amplify_09b04879",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    }
+}
