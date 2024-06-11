@@ -3,13 +3,13 @@ import awsData from '../../src/config/config';
 import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
 
 // Firebase Admin SDKの初期化
-if (!admin.apps.length) {
-    const serviceAccount = require('../../keys/');
+// if (!admin.apps.length) {
+//     const serviceAccount = require('../../keys/');
 
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-    });
-}
+//     admin.initializeApp({
+//         credential: admin.credential.cert(serviceAccount),
+//     });
+// }
 
 // 通知を送信する関数
 export const sendNotification = async (tokens: string[], title: string, body: string) => {
