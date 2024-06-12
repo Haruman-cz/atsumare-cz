@@ -22,13 +22,17 @@ if (!admin.apps.length) {
 
 // 通知を送信する関数
 export const sendNotification = async (tokens: string[], title: string, body: string) => {
+    console.log('ここは通知を送るところです。')
+    
     const message: admin.messaging.MessagingPayload = {
         notification: {
             title,
             body,
         },
     };
-
+            
+    console.log(message);
+            
     try {
         const response = await admin.messaging().sendToDevice(tokens, message);
         console.log('Notification sent successfully:', response);
@@ -59,8 +63,12 @@ export const sendNotificationsFromDynamoDB = async (title: string, body: string)
     try {
         const command = new ScanCommand(params);
         const data = await dynamoDBClient.send(command);
-        const tokens: string[] = data.Items?.map((item) => item.notificationToken.S ?? '') ?? [];
 
+        console.log('通知を送る人のリストです', data);
+        
+        const tokens: string[] = data.Items?.map((item) => item.notificationToken.S ?? '') ?? [];
+        console.log('通知を送る人のリストです', tokens);
+        
         // 通知を送信
         await sendNotification(tokens, title, body);
     } catch (error) {
