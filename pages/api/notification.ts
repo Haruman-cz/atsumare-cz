@@ -8,12 +8,12 @@ import {
 const NOTIFICATION_TABLE_NAME = 'Notification_Token_Table';
 const client = new DynamoDBClient({ region: awsData.awsRegion });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+    console.log('リクエストがきました。');
     if (req.method == 'POST') {
         if (req.body['key01'] == 'SETNOTIFICATIONTOKEN') {
             const { userId, NotificationToken } = req.body;
         
-            console.log('リクエストがきました。', userId, NotificationToken);
 
             if (!userId || !NotificationToken) {
                 return res.status(400).json({ message: 'Missing userId or NotificationToken' });
@@ -38,3 +38,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
     }
 }
+
+export default handler
