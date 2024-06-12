@@ -14,6 +14,8 @@ if (!admin.apps.length) {
         admin.initializeApp({
             credential: admin.credential.cert(cert),
         });
+
+        console.log('初期化はうまくいっているはずです。');
     } catch (error) {
         console.log(process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"));
         console.error('Error Firebase Admin SDKの初期化:', error);
@@ -24,20 +26,21 @@ if (!admin.apps.length) {
 export const sendNotification = async (tokens: string[], title: string, body: string) => {
     console.log('ここは通知を送るところです。')
     
-    const message: admin.messaging.MessagingPayload = {
-        notification: {
-            title,
-            body,
-        },
-    };
-            
-    console.log(message);
-            
-    try {
-        const response = await admin.messaging().sendToDevice(tokens, message);
-        console.log('Notification sent successfully:', response);
-    } catch (error) {
-        console.error('Error sending notification:', error);
+    for (const token of tokens) {
+        const message: admin.messaging.Message = {
+            token: token,
+            notification: {
+                title,
+                body,
+            },
+        };
+
+        try {
+            const response = await admin.messaging().send(message);
+            console.log('Notification sent successfully to', token, ':', response);
+        } catch (error) {
+            console.error('Error sending notification to', token, ':', error);
+        }
     }
 };
 
