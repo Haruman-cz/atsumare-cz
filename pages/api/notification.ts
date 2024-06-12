@@ -36,6 +36,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 res.status(500).json({ error: 'Failed to save token' });
             }
         }
+    } else {
+        res.status(404).send('Who are you :D')
     }
 }
 
