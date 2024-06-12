@@ -1,25 +1,26 @@
 import * as admin from 'firebase-admin';
 import awsData from '../../src/config/config';
 import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
-// import { Storage } from '@aws-amplify/storage';
 
-// const result = await Storage.get('example.jpg');
+// Firebase Admin SDKの初期化
+if (!admin.apps.length) {
+    const cert = {
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    };
 
-// // Firebase Admin SDKの初期化
-// if (!admin.apps.length) {
-//     const serviceAccount = require('../../atsumarecz-40fb0-firebase-adminsdk-8jso4-859073c68e.json');
-
-//     admin.initializeApp({
-//         credential: admin.credential.cert(serviceAccount),
-//     });
-// }
+    admin.initializeApp({
+        credential: admin.credential.cert(cert),
+    });
+}
 
 // 通知を送信する関数
 export const sendNotification = async (tokens: string[], title: string, body: string) => {
     const message: admin.messaging.MessagingPayload = {
         notification: {
-        title,
-        body,
+            title,
+            body,
         },
     };
 
@@ -34,7 +35,13 @@ export const sendNotification = async (tokens: string[], title: string, body: st
 // DynamoDBからトークンを取得して通知を送信する関数
 export const sendNotificationsFromDynamoDB = async (title: string, body: string) => {
     // DynamoDBクライアントの初期化
-    const dynamoDBClient = new DynamoDBClient({ region: awsData.awsRegion });
+    const dynamoDBClient = new DynamoDBClient({ 
+        region: awsData.awsRegion,
+        credentials: {
+          accessKeyId: awsData.accessKeyId,
+          secretAccessKey: awsData.secretAccessKey
+        }
+    });
 
     const params = {
         TableName: 'Notification_Token_Table',
