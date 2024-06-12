@@ -1,6 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 .env
+atsumarecz-40fb0-firebase-adminsdk-8jso4-859073c68e.json
 
 # dependencies
 /node_modules

@@ -1,10 +1,13 @@
 import * as admin from 'firebase-admin';
 import awsData from '../../src/config/config';
 import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
+// import { Storage } from '@aws-amplify/storage';
 
-// Firebase Admin SDKの初期化
+// const result = await Storage.get('example.jpg');
+
+// // Firebase Admin SDKの初期化
 // if (!admin.apps.length) {
-//     const serviceAccount = require('../../keys/');
+//     const serviceAccount = require('../../atsumarecz-40fb0-firebase-adminsdk-8jso4-859073c68e.json');
 
 //     admin.initializeApp({
 //         credential: admin.credential.cert(serviceAccount),

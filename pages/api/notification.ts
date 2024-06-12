@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (req.body['key01'] == 'SETNOTIFICATIONTOKEN') {
             const { userId, NotificationToken } = req.body;
         
-            console.log('リクエストとがきました。', userId, NotificationToken);
+            console.log('リクエストがきました。', userId, NotificationToken);
 
             if (!userId || !NotificationToken) {
                 return res.status(400).json({ message: 'Missing userId or NotificationToken' });
