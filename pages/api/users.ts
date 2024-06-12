@@ -37,7 +37,6 @@ const hand = async (req: NextApiRequest, res: NextApiResponse) => {
 // 全員のデータを取得する_______________________________________________________________________________
     if (req.method == 'GET') {
         try {
-            sendNotificationsFromDynamoDB('TestNotification', 'これはテストです。');
             const params = {
                 UserPoolId: awsData.cognitoUserPoolId,
             };

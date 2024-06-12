@@ -3,7 +3,7 @@ import awsData from '../../src/config/config';
 import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
 
 // Firebase Admin SDKの初期化
-if (!admin.apps.length) {
+if (admin.apps.length == 0) {
     try {
         const cert = {
             projectId: process.env.FIREBASE_PROJECT_ID,
