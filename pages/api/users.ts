@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import awsData from '../../src/config/config';
-import { sendNotificationsFromDynamoDB } from '../../src/Notification/notification'
 import {
     CognitoIdentityProviderClient,
     AdminUpdateUserAttributesCommand,
@@ -31,7 +30,6 @@ async function getUserAttributes(username) {
         throw error;
     }
 }
-
 
 const hand = async (req: NextApiRequest, res: NextApiResponse) => {
 // 全員のデータを取得する_______________________________________________________________________________

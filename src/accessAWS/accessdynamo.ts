@@ -8,16 +8,74 @@ import {
     UpdateItemCommand,
     UpdateItemCommandInput
 } from '@aws-sdk/client-dynamodb';
+import {
+    CognitoIdentityProviderClient,
+    AdminUpdateUserAttributesCommand,
+    ListUsersCommand,
+    AdminGetUserCommand,
+} from '@aws-sdk/client-cognito-identity-provider';
 import { v4 as uuidv4 } from 'uuid';
 
+const TABLE_NAME = 'user_attendance';
 
-const client = new DynamoDBClient({ 
+const dynamoDBClient = new DynamoDBClient({ 
     region: awsData.awsRegion,
     credentials: {
       accessKeyId: awsData.accessKeyId,
       secretAccessKey: awsData.secretAccessKey
     }
 });
+
+const cognitoClient = new CognitoIdentityProviderClient({
+    region: awsData.awsRegion,
+    credentials: {
+      accessKeyId: awsData.accessKeyId as string,
+      secretAccessKey: awsData.secretAccessKey as string,
+    },
+});
+
+
+// 全ユーザの出欠を作成
+async function createUserAttendance(event_id: string): Promise<void> {
+    try {
+        // Cognitoから全ユーザーの情報を取得
+        const command = new ListUsersCommand({
+                UserPoolId: 'YOUR_USER_POOL_ID', // ユーザープールIDを指定
+                AttributesToGet: ['sub'] // ユーザーIDの属性のみを取得
+        });
+        const response = await cognitoClient.send(command);
+    
+        // 全ユーザーのユーザーIDを取得し、出席情報をDynamoDBに更新
+        if (response.Users) {
+            const promises = response.Users.map(async (user: any) => {
+            const user_id = user.Attributes?.find((attr: any) => attr.Name === 'sub')?.Value;
+            if (user_id) {
+                const params = {
+                    TableName: TABLE_NAME,
+                    Key: {
+                        event_id: { S: event_id },
+                        user_id: { S: user_id }
+                    },
+                    UpdateExpression: 'SET attendance = :attendance',
+                    ExpressionAttributeValues: {
+                        ':attendance': { N: '1' }
+                    }
+                };
+    
+                await dynamoDBClient.send(new UpdateItemCommand(params));
+            }
+        });
+    
+            // 全てのユーザーの出席情報の更新が完了するまで待機
+            await Promise.all(promises);
+      ``}
+  
+      console.log('出席情報の更新が完了しました');
+    } catch (error) {
+        console.error('出席情報の更新中にエラーが発生しました', error);
+        throw error;
+    }
+}
 
 //テーブルからイベントデータを取得する関数
 export async function getEventFromDynamoDB(tableName: string): Promise<any[]> {
@@ -28,7 +86,7 @@ export async function getEventFromDynamoDB(tableName: string): Promise<any[]> {
     };
     try{
         const command = new ScanCommand(getParams);
-        const response = await client.send(command);
+        const response = await dynamoDBClient.send(command);
 console.log('Scan succeeded: getEventData');
 
         return response.Items;
@@ -36,6 +94,8 @@ console.log('Scan succeeded: getEventData');
         console.error('Unable to scan the table. Error:', err);
     }
 }
+
+
 
 //イベントデータを追加する関数
 export async function addEventToDynamoDB(tableName: string, item: any, coordinatorId: string): Promise<any> {
@@ -64,7 +124,7 @@ console.log('新しいイベントの設定');
     try {
         // データを追加する
         const command = new PutItemCommand(putParams);
-        const response = await client.send(command);
+        const response = await dynamoDBClient.send(command);
 console.log("Item added successfully:", response);
 
         // チャットセッションの作成
@@ -105,7 +165,7 @@ export async function updateEventInDynamoDB(tableName: string, partitionKey: str
 
     try {
         const command = new UpdateItemCommand(updateParams);
-        const response = await client.send(command);
+        const response = await dynamoDBClient.send(command);
         console.log("Item updated successfully:", partitionKey);
         return 0;
     } catch (error) {
