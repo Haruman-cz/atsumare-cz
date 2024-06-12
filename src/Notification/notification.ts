@@ -4,15 +4,20 @@ import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
 
 // Firebase Admin SDKの初期化
 if (!admin.apps.length) {
-    const cert = {
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-    };
+    try {
+        const cert = {
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+        };
 
-    admin.initializeApp({
-        credential: admin.credential.cert(cert),
-    });
+        admin.initializeApp({
+            credential: admin.credential.cert(cert),
+        });
+    } catch (error) {
+        console.log(process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"));
+        console.error('Error Firebase Admin SDKの初期化:', error);
+    }
 }
 
 // 通知を送信する関数
@@ -34,6 +39,9 @@ export const sendNotification = async (tokens: string[], title: string, body: st
 
 // DynamoDBからトークンを取得して通知を送信する関数
 export const sendNotificationsFromDynamoDB = async (title: string, body: string) => {
+
+    console.log('全員に通知を送る関数が呼ばれました。', title, body);
+
     // DynamoDBクライアントの初期化
     const dynamoDBClient = new DynamoDBClient({ 
         region: awsData.awsRegion,
