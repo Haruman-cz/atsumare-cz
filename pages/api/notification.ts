@@ -6,7 +6,13 @@ import {
 } from '@aws-sdk/client-dynamodb';
 
 const NOTIFICATION_TABLE_NAME = 'Notification_Token_Table';
-const client = new DynamoDBClient({ region: awsData.awsRegion });
+const client = new DynamoDBClient({ 
+    region: awsData.awsRegion,
+    credentials: {
+      accessKeyId: awsData.accessKeyId,
+      secretAccessKey: awsData.secretAccessKey
+    }
+});
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
     console.log('リクエストがきました。');
