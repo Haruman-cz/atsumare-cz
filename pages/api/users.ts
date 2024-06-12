@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import awsData from '../../src/config/config';
+import { sendNotificationsFromDynamoDB } from '../../src/Notification/notification'
 import {
     CognitoIdentityProviderClient,
     AdminUpdateUserAttributesCommand,
@@ -36,6 +37,7 @@ const hand = async (req: NextApiRequest, res: NextApiResponse) => {
 // 全員のデータを取得する_______________________________________________________________________________
     if (req.method == 'GET') {
         try {
+            sendNotificationsFromDynamoDB('TestNotification', 'これはテストです。');
             const params = {
                 UserPoolId: awsData.cognitoUserPoolId,
             };
