@@ -138,7 +138,7 @@ console.error("Error adding item to DynamoDB:", error);
     }
 }
 
-//イベントデータの書き換えを行う関数
+//イベントの書き換えを行う関数
 export async function updateEventInDynamoDB(tableName: string, partitionKey: string, event: any): Promise<number> {
     const updateParams: UpdateItemCommandInput = {
         TableName: tableName,
@@ -162,7 +162,31 @@ export async function updateEventInDynamoDB(tableName: string, partitionKey: str
 
     try {
         const command = new UpdateItemCommand(updateParams);
-        const response = await dynamoDBClient.send(command);
+        await dynamoDBClient.send(command);
+        console.log("Item updated successfully:", partitionKey);
+        return 0;
+    } catch (error) {
+        console.error("Error updating item in DynamoDB:", error);
+        return 1;
+    }
+}
+
+// イベントを終わらせる関数
+export async function finishEvent(tableName: string, partitionKey: string): Promise<number> {
+    const updateParams: UpdateItemCommandInput = {
+        TableName: tableName,
+        Key: {
+            'event_id': { S: partitionKey },
+        },
+        UpdateExpression: 'set event_finished = :event_finished',
+        ExpressionAttributeValues: {
+            ':event_finished': { N: '1' },
+        }
+    };
+
+    try {
+        const command = new UpdateItemCommand(updateParams);
+        await dynamoDBClient.send(command);
         console.log("Item updated successfully:", partitionKey);
         return 0;
     } catch (error) {

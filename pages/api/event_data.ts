@@ -3,7 +3,8 @@ import { Event } from '../../src/config/config';
 import { 
     getEventFromDynamoDB,
     addEventToDynamoDB,
-    updateEventInDynamoDB 
+    updateEventInDynamoDB,
+    finishEvent
 } from '../../src/accessAWS/accessdynamo';
 
 
@@ -119,8 +120,29 @@ console.error("Error fetching data from DynamoDB:", error);
             } else {
                 res.status(500).json('できてませんわ');
             }
+        } else
+        if (req.body['key01'] == 'FINISHEVENT') {
+            const eventId = req.body['data'];
+
+            // データを更新する関数を呼び出す
+            await finishEvent(TABLE_NAME, eventId)
+            .then((response) => {
+                if (response == 0) {
+                    console.log("Item finished successfully!");
+                    res.status(200).json('うまくできました！イベントを終わらせました。');
+                } else 
+                if (response == 1) {
+                    console.log('Error');
+                    res.status(500).json('できてませんわ');
+                }
+            })
+            .catch((error) => {
+                console.error("Error updating item:", error);
+                res.status(500).json('できてませんわ');
+            });
+            
         } else {
-            //
+
         }
     }
 }
