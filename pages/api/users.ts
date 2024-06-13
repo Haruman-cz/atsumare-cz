@@ -38,18 +38,24 @@ const hand = async (req: NextApiRequest, res: NextApiResponse) => {
             const params = {
                 UserPoolId: awsData.cognitoUserPoolId,
             };
-        
+    
             const command = new ListUsersCommand(params);
             const response = await client.send(command);
-        
-console.log(response.Users);
-
-            // ユーザーリストをレスポンスとして返す
-            return res.status(200).json(response.Users);
-            } catch (error) {
-                console.error("Error listing users:", error);
-                return res.status(500).json({ message: "Internal Server Error", error: error.message });
-            }
+    
+            // nameがnullではないユーザーのみをフィルタリング
+            const filteredUsers = response.Users.filter(user => {
+                const nameAttribute = user.Attributes.find(attr => attr.Name === 'name');
+                return nameAttribute && nameAttribute.Value !== null;
+            });
+    
+            console.log(filteredUsers);
+    
+            // フィルタリングされたユーザーリストをレスポンスとして返す
+            return res.status(200).json(filteredUsers);
+        } catch (error) {
+            console.error("Error listing users:", error);
+            return res.status(500).json({ message: "Internal Server Error", error: error.message });
+        }
     } else
 // 自分のデータを取得する_______________________________________________________________________________
     if (req.method == 'POST') {
