@@ -10,14 +10,12 @@ import {
 } from '@aws-sdk/client-dynamodb';
 import {
     CognitoIdentityProviderClient,
-    AdminUpdateUserAttributesCommand,
     ListUsersCommand,
-    AdminGetUserCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { v4 as uuidv4 } from 'uuid';
 
-const TABLE_NAME = 'user_attendance';
 
+const TABLE_NAME = 'user_attendance';
 const dynamoDBClient = new DynamoDBClient({ 
     region: awsData.awsRegion,
     credentials: {
@@ -25,7 +23,6 @@ const dynamoDBClient = new DynamoDBClient({
       secretAccessKey: awsData.secretAccessKey
     }
 });
-
 const cognitoClient = new CognitoIdentityProviderClient({
     region: awsData.awsRegion,
     credentials: {
@@ -40,7 +37,7 @@ async function createUserAttendance(event_id: string): Promise<void> {
     try {
         // Cognitoから全ユーザーの情報を取得
         const command = new ListUsersCommand({
-                UserPoolId: 'YOUR_USER_POOL_ID', // ユーザープールIDを指定
+                UserPoolId: awsData.cognitoUserPoolId, // ユーザープールIDを指定
                 AttributesToGet: ['sub'] // ユーザーIDの属性のみを取得
         });
         const response = await cognitoClient.send(command);
@@ -70,7 +67,7 @@ async function createUserAttendance(event_id: string): Promise<void> {
             await Promise.all(promises);
       ``}
   
-      console.log('出席情報の更新が完了しました');
+        console.log('出席情報の更新が完了しました');
     } catch (error) {
         console.error('出席情報の更新中にエラーが発生しました', error);
         throw error;
