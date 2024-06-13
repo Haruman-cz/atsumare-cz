@@ -118,8 +118,8 @@ console.log('プロフィールの変更処理\nID: ', sub, '\nnewProfile: ', us
                 return res.status(500).json({ message: 'Internal Server Error', error: error.message });
             }
         } else 
-// addmin権限の付与を行い、自身の権限を剥奪する_______________________________________________________________________________
-        if (req.body['key01'] == 'CHANGEADDMIN') {
+// admin権限の付与を行い、自身の権限を剥奪する_______________________________________________________________________________
+        if (req.body['key01'] == 'CHANGEADMIN') {
             const { adminId, targetUserId, attributes } = req.body;
 
             if (!adminId || !targetUserId || !attributes) {

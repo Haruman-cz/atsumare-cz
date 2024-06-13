@@ -122,7 +122,7 @@ console.error("Error fetching data from DynamoDB:", error);
             }
         } else
         if (req.body['key01'] == 'FINISHEVENT') {
-            const eventId = req.body['data'];
+            const eventId = req.body['eventId'];
 
             // データを更新する関数を呼び出す
             await finishEvent(TABLE_NAME, eventId)
