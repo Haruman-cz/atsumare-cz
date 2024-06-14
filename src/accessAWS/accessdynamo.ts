@@ -65,7 +65,7 @@ async function createUserAttendance(event_id: string): Promise<void> {
     
             // 全てのユーザーの出席情報の更新が完了するまで待機
             await Promise.all(promises);
-      ``}
+        }
   
         console.log('出席情報の更新が完了しました');
     } catch (error) {
@@ -94,11 +94,11 @@ console.log('Scan succeeded: getEventData');
 
 
 
-//イベントデータを追加する関数
+//新しいイベントデータを追加する関数
 export async function addEventToDynamoDB(tableName: string, item: any, coordinatorId: string): Promise<any> {
-    // データを追加するリクエスト
 console.log('新しいイベントの設定');
 
+    // イベントIDの生成
     const eventId = uuidv4();
 
     const putParams = {
@@ -126,6 +126,9 @@ console.log("Item added successfully:", response);
 
         // チャットセッションの作成
         await createChatSessions({ eventId, coordinatorId });
+        // 全員の出席(未回答)を作成
+        await createUserAttendance(eventId);
+        // 全員通知を飛ばす処理の関数
         await sendNotificationsFromDynamoDB(
             '新しいイベントが設定されました',
             item.event_title
@@ -164,6 +167,13 @@ export async function updateEventInDynamoDB(tableName: string, partitionKey: str
         const command = new UpdateItemCommand(updateParams);
         await dynamoDBClient.send(command);
         console.log("Item updated successfully:", partitionKey);
+
+        // イベント編集の通知
+        await sendNotificationsFromDynamoDB(
+            'イベントが編集されました',
+            event.event_title
+        );
+
         return 0;
     } catch (error) {
         console.error("Error updating item in DynamoDB:", error);

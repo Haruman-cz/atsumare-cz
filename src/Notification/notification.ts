@@ -67,10 +67,10 @@ export const sendNotificationsFromDynamoDB = async (title: string, body: string)
         const command = new ScanCommand(params);
         const data = await dynamoDBClient.send(command);
 
-        console.log('通知を送る人のリストです', data);
+        // console.log('通知を送る人のリストです', data);
         
         const tokens: string[] = data.Items?.map((item) => item.notificationToken.S ?? '') ?? [];
-        console.log('通知を送る人のリストです', tokens);
+        // console.log('通知を送る人のリストです', tokens);
         
         // 通知を送信
         await sendNotification(tokens, title, body);
