@@ -225,6 +225,8 @@ export async function SendChatNotification(sessionId: string, senderId: string, 
         const command = new GetItemCommand(params);
         const result = await dynamoDBClient.send(command);
     
+console.log('userIdたちです', result)
+
         if (!result.Item) {
             throw new Error('No participants found for the given sessionId');
         }
@@ -234,6 +236,8 @@ export async function SendChatNotification(sessionId: string, senderId: string, 
             .filter((participant: string) => participant !== senderId);
 
         const notificationTokens = await getNotificationToken(participants);
+
+console.log('notificationTokenたちです', notificationTokens)
 
         // 通知送信部分
         await sendNotification(notificationTokens, senderName, message);

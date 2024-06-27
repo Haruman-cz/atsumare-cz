@@ -150,7 +150,7 @@ console.log(MESSAGE_TABLE_NAME, 'へのメッセージの追加はできまし�
             
                 await dynamoDbClient.send(updateItemCommand);
                 
-                await SendChatNotification(sessionId, senderId, senderName, message);
+                SendChatNotification(sessionId, senderId, senderName, message);
 
                 res.status(200).json({ messageId, timestamp });
             } catch (error) {
