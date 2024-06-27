@@ -33,7 +33,7 @@ async function updateEvent(parsedData: any) {
 console.log('今回のイベントのIDは！:', newevent.event_id);
     if (newevent.event_id == 'NEWEVENT') {
         console.log('新しく設定されたイベントです。');
-        console.log(newevent);
+        // console.log(newevent);
 
         // イベントを保存
         await addEventToDynamoDB(TABLE_NAME, newevent, newevent.event_coordinator_id)
@@ -53,7 +53,7 @@ console.log('今回のイベントのIDは！:', newevent.event_id);
 
         return newevent;
     } else {
-console.log('既存のイベントですね');
+// console.log('既存のイベントですね');
         //既存のイベントならイベントの上書き
         const partitionKey =    newevent.event_id;
 

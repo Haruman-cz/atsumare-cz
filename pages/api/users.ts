@@ -133,8 +133,8 @@ console.log('プロフィールの変更処理\nID: ', sub, '\nnewProfile: ', us
             }
 
             const userAttributes = Object.entries(attributes).map(([Name, Value]) => ({
-            Name,
-            Value: Value.toString(),
+                Name,
+                Value: Value.toString(),
             }));
 
             const params = {

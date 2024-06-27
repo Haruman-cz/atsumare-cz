@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const sessionId = Item.session_id.S;
                     res.status(200).json({ session_id: sessionId });
                 } else {
-                    res.status(404).json({ error: 'Session ID not found' });
+                    res.status(404).json({ error: 'SessionIDが見つかりません' });
                 }
             } catch (error) {
                 console.error('Error fetching session ID:', error);

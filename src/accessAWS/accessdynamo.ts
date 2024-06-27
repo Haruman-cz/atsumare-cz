@@ -212,6 +212,7 @@ export async function finishEvent(tableName: string, partitionKey: string): Prom
 
 // チャットの通知
 export async function SendChatNotification(sessionId: string, senderId: string, senderName: string, message: string): Promise<string[]> {
+    console.log('チャットの通知を飛ばす関数が呼ばれました')
     try {
         const params = {
             TableName: 'ChatSessions',
@@ -244,7 +245,7 @@ console.log('notificationTokenたちです', notificationTokens)
 
         return participants;
     } catch (error) {
-        console.error('Error getting participants:', error);
+        console.error('エラーが起こってます。:', error);
         throw new Error('Could not retrieve participants');
     }
 }
