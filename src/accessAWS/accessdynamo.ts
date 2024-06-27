@@ -1,12 +1,17 @@
 import awsData from '../config/config';
-import { sendNotificationsFromDynamoDB } from '../Notification/notification'
+import { 
+    sendNotificationsFromDynamoDB,
+    sendNotification
+ } from '../Notification/notification'
 import { createChatSessions } from './createChatSessions';
 import { 
     DynamoDBClient,
     ScanCommand,
     PutItemCommand,
     UpdateItemCommand,
-    UpdateItemCommandInput
+    UpdateItemCommandInput,
+    GetItemCommand,
+    BatchGetItemCommand
 } from '@aws-sdk/client-dynamodb';
 import {
     CognitoIdentityProviderClient,
@@ -205,3 +210,66 @@ export async function finishEvent(tableName: string, partitionKey: string): Prom
     }
 }
 
+// チャットの通知
+export async function SendChatNotification(sessionId: string, senderId: string, senderName: string, message: string): Promise<string[]> {
+    try {
+        const params = {
+            TableName: 'ChatSessions',
+            Key: {
+                sessionId: { S: sessionId },
+            },
+            ProjectionExpression: 'participants',
+        };
+    
+        // データを取得
+        const command = new GetItemCommand(params);
+        const result = await dynamoDBClient.send(command);
+    
+        if (!result.Item) {
+            throw new Error('No participants found for the given sessionId');
+        }
+
+        const participants = result.Item.participants.L
+            .map((participant: { S: string }) => participant.S)
+            .filter((participant: string) => participant !== senderId);
+
+        const notificationTokens = await getNotificationToken(participants);
+
+        // 通知送信部分
+        await sendNotification(notificationTokens, senderName, message);
+
+        return participants;
+    } catch (error) {
+        console.error('Error getting participants:', error);
+        throw new Error('Could not retrieve participants');
+    }
+}
+
+// 通知トークンをとってくる処理
+async function getNotificationToken(userIds: string[]): Promise<any[]> {
+    try {
+      const keys = userIds.map(userId => ({
+        userId: { S: userId },
+      }));
+  
+      const params = {
+        RequestItems: {
+          'Notification_Token_Table': {
+            Keys: keys,
+          },
+        },
+      };
+  
+      const command = new BatchGetItemCommand(params);
+      const result = await dynamoDBClient.send(command);
+  
+      if (!result.Responses || !result.Responses.Notification) {
+        throw new Error('No notifications found for the given userIds');
+      }
+  
+      return result.Responses.Notification;
+    } catch (error) {
+      console.error('Error getting notifications:', error);
+      throw new Error('Could not retrieve notifications');
+    }
+  }

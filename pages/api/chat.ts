@@ -1,5 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import awsData from '../../src/config/config';
+import {
+    SendChatNotification
+} from '../../src/accessAWS/accessdynamo';
 import { v4 as uuidv4 } from 'uuid';
 import {
     DynamoDBClient,
@@ -118,7 +121,7 @@ console.log('message送信のリクエストが来ました。', sessionId, send
                 message: { S: message },
                 timestamp: { S: timestamp },
             };
-        
+
 console.log('message追加のリクエストを作成しました。', newMessage);
     
             try {
@@ -146,7 +149,9 @@ console.log(MESSAGE_TABLE_NAME, 'へのメッセージの追加はできまし�
                 });
             
                 await dynamoDbClient.send(updateItemCommand);
-            
+                
+                await SendChatNotification(sessionId, senderId, senderName, message);
+
                 res.status(200).json({ messageId, timestamp });
             } catch (error) {
                 console.error('Error adding message to DynamoDB:', error);
