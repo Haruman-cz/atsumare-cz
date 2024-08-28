@@ -253,28 +253,32 @@ console.log('notificationTokenたちです', notificationTokens)
 // 通知トークンをとってくる処理
 async function getNotificationToken(userIds: string[]): Promise<any[]> {
     try {
-      const keys = userIds.map(userId => ({
-        userId: { S: userId },
-      }));
-  
-      const params = {
-        RequestItems: {
-          'Notification_Token_Table': {
-            Keys: keys,
-          },
-        },
-      };
-  
-      const command = new BatchGetItemCommand(params);
-      const result = await dynamoDBClient.send(command);
-  
-      if (!result.Responses || !result.Responses.Notification) {
-        throw new Error('No notifications found for the given userIds');
-      }
-  
-      return result.Responses.Notification;
+        const keys = userIds.map(userId => ({
+            userId: { S: userId },
+        }));
+    
+        const params = {
+            RequestItems: {
+                'Notification_Token_Table': {
+                    Keys: keys,
+                },
+            },
+        };
+    
+        const command = new BatchGetItemCommand(params);
+        const result = await dynamoDBClient.send(command);
+    
+        if (!result.Responses || !result.Responses.Notification_Token_Table) {
+            throw new Error('No notifications found for the given userIds');
+        }
+    
+        const notificationTokens: string[] = result.Responses.Notification_Token_Table.map(
+            (item: { notificationToken: { S: string } }) => item.notificationToken.S
+        );
+
+        return notificationTokens;
     } catch (error) {
-      console.error('Error getting notifications:', error);
-      throw new Error('Could not retrieve notifications');
+        console.error('Error getting notifications:', error);
+        throw new Error('Could not retrieve notifications');
     }
-  }
+}

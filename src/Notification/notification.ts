@@ -24,7 +24,7 @@ if (admin.apps.length == 0) {
 
 // 通知を送信する関数
 export const sendNotification = async (tokens: string[], title: string, body: string) => {
-    console.log('ここは通知を送るところです。')
+    console.log('ここは通知を送るところです。:', title);
     
     for (const token of tokens) {
         const message: admin.messaging.Message = {
