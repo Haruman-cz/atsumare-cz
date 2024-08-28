@@ -250,7 +250,7 @@ console.log('notificationTokenたちです', notificationTokens)
     }
 }
 
-// 通知トークンをとってくる処理
+// userIdから通知トークンをとってくる処理
 async function getNotificationToken(userIds: string[]): Promise<any[]> {
     try {
         const keys = userIds.map(userId => ({
